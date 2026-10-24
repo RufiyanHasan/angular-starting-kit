@@ -1,0 +1,16 @@
+<h1>Dashboard</h1>
+<p>Welcome to {{ config()?.appName }}. This page is a lazy-loaded feature.</p>
+
+@if (config(); as c) {
+  <section class="card" aria-labelledby="runtime-config-heading">
+    <h2 id="runtime-config-heading">Runtime config</h2>
+    <dl>
+      <dt>API base URL</dt>
+      <dd>{{ c.apiBaseUrl }}</dd>
+      <dt>Mock API</dt>
+      <dd>{{ c.mockApi ? 'on' : 'off' }}</dd>
+      <dt>Log level</dt>
+      <dd>{{ c.logLevel }}</dd>
+    </dl>
+  </section>
+}

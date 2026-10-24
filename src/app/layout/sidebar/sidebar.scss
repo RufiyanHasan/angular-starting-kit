@@ -1,0 +1,55 @@
+:host {
+  display: block;
+}
+
+.sidebar {
+  height: 100%;
+  padding: var(--space-4) var(--space-2);
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  a {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    text-decoration: none;
+
+    &:hover {
+      background: var(--color-bg);
+    }
+
+    &.active {
+      background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+  }
+}
+
+// Mobile: off-canvas drawer, hidden (and removed from tab order) until opened.
+@media (max-width: 767.98px) {
+  :host {
+    position: fixed;
+    inset: var(--header-height) auto 0 0;
+    z-index: var(--z-sidebar);
+    width: min(80vw, var(--sidebar-width));
+    box-shadow: var(--shadow-md);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition:
+      transform 0.2s ease,
+      visibility 0.2s;
+  }
+
+  :host(.open) {
+    transform: none;
+    visibility: visible;
+  }
+}

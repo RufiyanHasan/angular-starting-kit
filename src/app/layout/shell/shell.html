@@ -1,0 +1,15 @@
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<app-route-loading-bar />
+<app-header [appName]="appName" [menuOpen]="menuOpen()" (menuToggle)="toggleMenu()" />
+<div class="body">
+  <app-sidebar [open]="menuOpen()" />
+  @if (menuOpen()) {
+    <div class="backdrop" aria-hidden="true" (click)="closeMenu()"></div>
+  }
+  <div class="content">
+    <main id="main-content" class="main" tabindex="-1">
+      <router-outlet />
+    </main>
+    <app-footer [appName]="appName" />
+  </div>
+</div>

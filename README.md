@@ -2,7 +2,7 @@
 
 A production-ready starter for new client projects. Clone it and you have a working app on day one: auth, an HTTP layer, theming, i18n, a sample feature, tests, CI and Docker.
 
-> **Status:** Phase 1 of 8 complete (workspace & tooling). The [Progress log](#progress-log) below is updated after every phase.
+> **Status:** Phase 2 of 8 complete (architecture). The [Progress log](#progress-log) below is updated after every phase.
 
 ---
 
@@ -153,20 +153,63 @@ npm start       # http://localhost:4200
 - **Commits:** [Conventional Commits](https://www.conventionalcommits.org), enforced by commitlint on `commit-msg`. `pre-commit` runs lint-staged (ESLint `--fix` + Prettier on staged files).
 - **SSR:** off by default. To enable it, run `ng add @angular/ssr` (full notes in Phase 8).
 
+### Architecture (Phase 2)
+
+**Boot sequence:** `main.ts` → `provideCore()` → `provideAppInitializer` fetches `assets/config.json` → validates it with `parseAppConfig()` → bootstraps. If the config is missing or invalid, `main.ts` shows a friendly "failed to start" page instead of a blank screen.
+
+**Runtime config (`public/assets/config.json`):**
+
+| Key                                   | Type                                            | Purpose                             |
+| ------------------------------------- | ----------------------------------------------- | ----------------------------------- |
+| `appName`                             | string                                          | Header, footer and `<title>` suffix |
+| `apiBaseUrl`                          | string                                          | Prefix for API calls (Phase 4)      |
+| `mockApi`                             | boolean                                         | Use the in-browser mock backend     |
+| `logLevel`                            | `debug` \| `info` \| `warn` \| `error` \| `off` | `LoggerService` threshold           |
+| `httpTimeoutMs`                       | number                                          | Request timeout (Phase 4)           |
+| `auth.provider`                       | `mock` \| `oidc`                                | Auth implementation (Phase 3)       |
+| `i18n.defaultLang` / `availableLangs` | string / string[]                               | Languages (Phase 5)                 |
+
+Read it with `inject(ConfigService).config()` (a signal) or `.get('key')`. Missing keys fall back to `DEFAULT_APP_CONFIG`, and invalid values fail fast. To deploy to a new environment, replace this one file. No rebuild is needed.
+
+**Core services:**
+
+| Service / provider            | Location                 | Role                                                                     |
+| ----------------------------- | ------------------------ | ------------------------------------------------------------------------ |
+| `provideCore()`               | `core/provide-core.ts`   | Registers every app-wide singleton                                       |
+| `ConfigService`               | `core/config/`           | Runtime config as a signal                                               |
+| `LoggerService` + `LOG_SINKS` | `core/logging/`          | Level-filtered logging. Add a remote sink by providing another `LogSink` |
+| `GlobalErrorHandler`          | `core/error/`            | Uncaught errors → logger (toast added in Phase 4)                        |
+| `AppTitleStrategy`            | `core/routing/`          | Route `title` → "Page · App name"                                        |
+| `provideConfigForTesting()`   | `core/config/testing.ts` | Seeds config synchronously in unit tests                                 |
+
+**Layout (`layout/`):**
+
+- `Shell` holds the skip link, `RouteLoadingBar`, `Header`, `Sidebar`, `<main id="main-content">` and `Footer`.
+- Below 768px the sidebar becomes an off-canvas drawer. It closes on navigation, on Escape and when you click the backdrop.
+- `RouteLoadingBar` shows during navigations, including lazy chunk loads. A 150ms delay stops it flashing on fast navigations.
+
+**Routing:** every feature is lazy-loaded through `loadChildren` from its own `features/<name>/<name>.routes.ts`. Unknown URLs render the 404 page inside the shell.
+
+**Adding a feature (short version, full guide in Phase 8):**
+
+1. Create `src/app/features/reports/reports.ts` (the component) and `reports.routes.ts`. The `routes` file default-exports a `Routes` array with a `title`.
+2. Add `{ path: 'reports', loadChildren: () => import('@features/reports/reports.routes') }` to the shell's children in `app.routes.ts`.
+3. Add `{ label: 'Reports', path: '/reports' }` to `layout/nav-items.ts`.
+
 ---
 
 ## Progress log
 
-| Phase                 | Status     | Summary                                                                                                                                                                                                                                 |
-| --------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0 Plan                | ✅ Done    | Plan approved. Defaults: hand-rolled a11y primitives (no CDK), Spanish as 2nd language                                                                                                                                                  |
-| 1 Workspace & tooling | ✅ Done    | Angular 22.2 zoneless app (SCSS, routing, Vitest, no SSR); angular-eslint with typed rules + layer boundaries; Prettier; husky + lint-staged + commitlint; path aliases; `.nvmrc`, `.editorconfig`, `.gitignore`. lint/test/build green |
-| 2 Architecture        | ⏳ Pending |                                                                                                                                                                                                                                         |
-| 3 Auth                | ⏳ Pending |                                                                                                                                                                                                                                         |
-| 4 HTTP layer          | ⏳ Pending |                                                                                                                                                                                                                                         |
-| 5 UI foundation       | ⏳ Pending |                                                                                                                                                                                                                                         |
-| 6 State & Users       | ⏳ Pending |                                                                                                                                                                                                                                         |
-| 7 Testing             | ⏳ Pending |                                                                                                                                                                                                                                         |
-| 8 DevOps & docs       | ⏳ Pending |                                                                                                                                                                                                                                         |
+| Phase                 | Status     | Summary                                                                                                                                                                                                                                                                |
+| --------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0 Plan                | ✅ Done    | Plan approved. Defaults: hand-rolled a11y primitives (no CDK), Spanish as 2nd language                                                                                                                                                                                 |
+| 1 Workspace & tooling | ✅ Done    | Angular 22.2 zoneless app (SCSS, routing, Vitest, no SSR); angular-eslint with typed rules + layer boundaries; Prettier; husky + lint-staged + commitlint; path aliases; `.nvmrc`, `.editorconfig`, `.gitignore`. lint/test/build green                                |
+| 2 Architecture        | ✅ Done    | Runtime `config.json` (validated, loaded before bootstrap), logger with pluggable sinks, global error handler, title strategy; responsive shell (header, off-canvas sidebar, footer, skip link, route loading bar); lazy dashboard/settings + 404. 22 unit tests green |
+| 3 Auth                | ⏳ Pending |                                                                                                                                                                                                                                                                        |
+| 4 HTTP layer          | ⏳ Pending |                                                                                                                                                                                                                                                                        |
+| 5 UI foundation       | ⏳ Pending |                                                                                                                                                                                                                                                                        |
+| 6 State & Users       | ⏳ Pending |                                                                                                                                                                                                                                                                        |
+| 7 Testing             | ⏳ Pending |                                                                                                                                                                                                                                                                        |
+| 8 DevOps & docs       | ⏳ Pending |                                                                                                                                                                                                                                                                        |
 
 _Phase 8 replaces this README with the full guide: quick start, folder structure, how to add a feature, how to swap the auth provider, how to add a language, a scripts table and conventions. The progress log stays at the bottom._

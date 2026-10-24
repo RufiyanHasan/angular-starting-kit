@@ -1,0 +1,35 @@
+// Design tokens. Phase 5 adds a dark theme by redefining these under [data-theme='dark'].
+:root {
+  --color-bg: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-text: #1b1f24;
+  --color-text-muted: #59636e;
+  --color-border: #d8dee4;
+  --color-primary: #3b5bdb;
+  --color-primary-contrast: #ffffff;
+  --color-focus: #3b5bdb;
+
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.75rem;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --shadow-md: 0 2px 8px rgb(0 0 0 / 8%);
+
+  --header-height: 56px;
+  --sidebar-width: 240px;
+  --breakpoint-md: 768px; // reference only: CSS vars can't be used in media queries
+  --z-sidebar: 20;
+  --z-header: 30;
+  --z-loading-bar: 40;
+}

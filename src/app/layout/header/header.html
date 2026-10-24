@@ -1,0 +1,16 @@
+<header class="header">
+  <button
+    type="button"
+    class="menu-button"
+    aria-controls="app-sidebar"
+    [attr.aria-expanded]="menuOpen()"
+    [attr.aria-label]="menuOpen() ? 'Close navigation' : 'Open navigation'"
+    (click)="menuToggle.emit()"
+  >
+    <span class="menu-icon" aria-hidden="true"></span>
+  </button>
+  <a class="brand" routerLink="/">{{ appName() }}</a>
+  <div class="actions">
+    <!-- Phase 3/5: user menu, theme toggle, language switcher -->
+  </div>
+</header>
