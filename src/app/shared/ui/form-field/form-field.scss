@@ -1,0 +1,30 @@
+:host {
+  display: grid;
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
+}
+
+.label {
+  font-weight: 500;
+}
+
+.required {
+  margin-left: 2px;
+  color: var(--color-danger);
+}
+
+.hint,
+.error {
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+.hint {
+  color: var(--color-text-muted);
+}
+
+// Always rendered (empty when valid) so the layout doesn't jump when an error appears.
+.error {
+  min-height: 1.25em;
+  color: var(--color-danger);
+}

@@ -1,17 +1,65 @@
-// Design tokens. Phase 5 adds a dark theme by redefining these under [data-theme='dark'].
-:root {
-  --color-bg: #f7f8fa;
+// Design tokens. Components use only these variables, so a theme is just a set of overrides.
+// Contrast: every text/background pair below meets WCAG AA (4.5:1) in both themes.
+
+@mixin light {
+  color-scheme: light;
+  --color-bg: #f6f7f9;
   --color-surface: #ffffff;
+  --color-surface-2: #eef0f3;
   --color-text: #1b1f24;
-  --color-text-muted: #59636e;
-  --color-border: #d8dee4;
-  --color-primary: #3b5bdb;
+  --color-text-muted: #545e69;
+  --color-border: #d3d9e0;
+  --color-border-strong: #8c96a1;
+  --color-primary: #3451c7;
+  --color-primary-hover: #2a43a8;
+  --color-primary-soft: #e8ecfb;
   --color-primary-contrast: #ffffff;
-  --color-focus: #3b5bdb;
-  --color-danger: #c92a2a;
-  --color-danger-bg: #fff0f0;
+  --color-focus: #3451c7;
+  --color-danger: #b42323;
+  --color-danger-hover: #961b1b;
+  --color-danger-bg: #fdeeee;
+  --color-success: #23733a;
+  --color-success-bg: #e9f6ec;
+  --color-warning: #8f4a00;
+  --color-warning-bg: #fff3e0;
+  --color-info: #3451c7;
+  --color-backdrop: rgb(15 18 22 / 45%);
+  --shadow-md: 0 2px 8px rgb(16 24 40 / 8%);
+  --shadow-lg: 0 12px 32px rgb(16 24 40 / 16%);
+}
+
+@mixin dark {
+  color-scheme: dark;
+  --color-bg: #0f1216;
+  --color-surface: #171b21;
+  --color-surface-2: #20262e;
+  --color-text: #e6e9ed;
+  --color-text-muted: #a3adb8;
+  --color-border: #2e353e;
+  --color-border-strong: #5f6a76;
+  --color-primary: #93a8ff;
+  --color-primary-hover: #b3c2ff;
+  --color-primary-soft: #232c4a;
+  --color-primary-contrast: #0d1226;
+  --color-focus: #93a8ff;
+  --color-danger: #ff8e8e;
+  --color-danger-hover: #ffb0b0;
+  --color-danger-bg: #3a1c1f;
+  --color-success: #74d68a;
+  --color-success-bg: #18301f;
+  --color-warning: #ffb561;
+  --color-warning-bg: #36260f;
+  --color-info: #93a8ff;
+  --color-backdrop: rgb(0 0 0 / 60%);
+  --shadow-md: 0 2px 8px rgb(0 0 0 / 40%);
+  --shadow-lg: 0 12px 32px rgb(0 0 0 / 55%);
+}
+
+:root {
+  @include light;
 
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
   --font-size-lg: 1.25rem;
@@ -26,7 +74,8 @@
 
   --radius-sm: 4px;
   --radius-md: 8px;
-  --shadow-md: 0 2px 8px rgb(0 0 0 / 8%);
+  --radius-full: 999px;
+  --duration-fast: 150ms;
 
   --header-height: 56px;
   --sidebar-width: 240px;
@@ -34,4 +83,16 @@
   --z-sidebar: 20;
   --z-header: 30;
   --z-loading-bar: 40;
+  --z-toast: 1000;
+}
+
+// ThemeService sets data-theme; before it runs, the OS preference applies.
+:root[data-theme='dark'] {
+  @include dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    @include dark;
+  }
 }

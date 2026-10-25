@@ -1,0 +1,18 @@
+# Keep the build context small and free of local state.
+.git
+.github
+.husky
+.angular
+.vscode
+.idea
+node_modules
+dist
+coverage
+playwright-report
+test-results
+blob-report
+e2e
+docs
+*.md
+Dockerfile
+.dockerignore

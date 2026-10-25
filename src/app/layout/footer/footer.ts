@@ -1,8 +1,12 @@
 import { Component, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-footer',
-  template: `<footer class="footer">© {{ year }} {{ appName() }}</footer>`,
+  imports: [TranslocoPipe],
+  template: `<footer class="footer">
+    {{ 'app.footer' | transloco: { year, appName: appName() } }}
+  </footer>`,
   styles: `
     .footer {
       padding: var(--space-4);

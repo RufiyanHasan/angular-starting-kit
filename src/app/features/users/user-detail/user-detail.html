@@ -1,0 +1,68 @@
+<a class="back" routerLink="/users" [queryParams]="listParams()">
+  <app-icon name="arrow-left" [size]="16" />
+  {{ 'users.back' | transloco }}
+</a>
+
+@if (user.isLoading()) {
+  <h1>
+    <app-skeleton width="14ch" height="1.25em" />
+    <span class="visually-hidden">{{ 'ui.loading' | transloco }}</span>
+  </h1>
+  <div class="card">
+    @for (i of [1, 2, 3, 4]; track i) {
+      <app-skeleton class="line" width="60%" />
+    }
+  </div>
+} @else if (notFound()) {
+  <h1 class="visually-hidden">{{ 'users.notFound' | transloco }}</h1>
+  <app-empty-state
+    icon="search"
+    [heading]="'users.notFound' | transloco"
+    [description]="'users.notFoundText' | transloco"
+  />
+} @else if (user.error()) {
+  <h1>{{ 'titles.userDetail' | transloco }}</h1>
+  <div class="alert" role="alert">
+    <p>{{ 'errors.http.server' | transloco }}</p>
+    <button appButton type="button" size="sm" (click)="user.reload()">
+      {{ 'users.retry' | transloco }}
+    </button>
+  </div>
+} @else if (user.value(); as u) {
+  <header class="page-header">
+    <h1>{{ u.name }}</h1>
+    @if (isAdmin()) {
+      <div class="page-actions">
+        <a appButton routerLink="edit">
+          <app-icon name="pencil" />
+          {{ 'users.edit' | transloco }}
+        </a>
+        <button appButton type="button" variant="danger" (click)="remove(u)">
+          <app-icon name="trash" />
+          {{ 'users.delete' | transloco }}
+        </button>
+      </div>
+    }
+  </header>
+
+  <dl class="card details">
+    <dt>{{ 'users.email' | transloco }}</dt>
+    <dd>
+      <a [href]="'mailto:' + u.email">{{ u.email }}</a>
+    </dd>
+    <dt>{{ 'users.role' | transloco }}</dt>
+    <dd>
+      <span class="badge" [attr.data-tone]="u.role === 'admin' ? 'primary' : null">
+        {{ 'users.roles.' + u.role | transloco }}
+      </span>
+    </dd>
+    <dt>{{ 'users.status' | transloco }}</dt>
+    <dd>
+      <span class="badge" [attr.data-tone]="u.status === 'active' ? 'success' : null">
+        {{ 'users.statuses.' + u.status | transloco }}
+      </span>
+    </dd>
+    <dt>{{ 'users.createdAt' | transloco }}</dt>
+    <dd>{{ u.createdAt | localDate: 'long' }}</dd>
+  </dl>
+}

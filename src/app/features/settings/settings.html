@@ -1,0 +1,37 @@
+<h1>{{ 'titles.settings' | transloco }}</h1>
+<p class="intro">{{ 'settings.intro' | transloco }}</p>
+
+<section class="card" aria-labelledby="appearance-heading">
+  <h2 id="appearance-heading">{{ 'settings.appearance' | transloco }}</h2>
+  <fieldset aria-describedby="theme-hint">
+    <legend>{{ 'theme.label' | transloco }}</legend>
+    <div class="options">
+      @for (option of themes; track option) {
+        <label class="option">
+          <input
+            type="radio"
+            name="theme"
+            [value]="option"
+            [checked]="theme.preference() === option"
+            (change)="setTheme(option)"
+          />
+          {{ 'theme.' + option | transloco }}
+        </label>
+      }
+    </div>
+    <p id="theme-hint" class="hint">{{ 'settings.themeHint' | transloco }}</p>
+  </fieldset>
+</section>
+
+<section class="card" aria-labelledby="region-heading">
+  <h2 id="region-heading">{{ 'settings.region' | transloco }}</h2>
+  <app-form-field [label]="'language.label' | transloco">
+    <select appInput id="settings-language" (change)="setLanguage($event)">
+      @for (lang of language.available(); track lang) {
+        <option [value]="lang" [attr.lang]="lang" [selected]="lang === language.lang()">
+          {{ language.displayName(lang) }}
+        </option>
+      }
+    </select>
+  </app-form-field>
+</section>

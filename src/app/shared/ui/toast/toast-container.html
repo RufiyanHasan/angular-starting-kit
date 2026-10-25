@@ -1,0 +1,12 @@
+<div class="stack">
+  <div class="region" role="alert" aria-live="assertive">
+    @for (t of errors(); track t.id) {
+      <app-toast-item [toast]="t" (dismiss)="toast.dismiss(t.id)" animate.enter="toast-enter" />
+    }
+  </div>
+  <div class="region" role="status" aria-live="polite">
+    @for (t of others(); track t.id) {
+      <app-toast-item [toast]="t" (dismiss)="toast.dismiss(t.id)" animate.enter="toast-enter" />
+    }
+  </div>
+</div>

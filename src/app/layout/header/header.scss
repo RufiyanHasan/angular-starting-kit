@@ -12,6 +12,10 @@
 }
 
 .brand {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-weight: 600;
   font-size: var(--font-size-lg);
   color: var(--color-text);
@@ -25,6 +29,13 @@
   gap: var(--space-2);
 }
 
+// Narrow phones: the language picker moves out of the header (it's also on Settings).
+.language {
+  @media (max-width: 479.98px) {
+    display: none;
+  }
+}
+
 .user {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
@@ -34,29 +45,7 @@
   }
 }
 
-.sign-out {
-  padding: var(--space-1) var(--space-3);
-  font: inherit;
-  font-size: var(--font-size-sm);
-  color: inherit;
-  background: transparent;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-}
-
 .menu-button {
-  display: inline-grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border: 0;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-
   @media (min-width: 768px) {
     display: none;
   }

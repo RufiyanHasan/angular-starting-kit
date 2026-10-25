@@ -1,0 +1,183 @@
+{
+  "app": {
+    "skipLink": "Skip to main content",
+    "footer": "© {{ year }} {{ appName }}"
+  },
+  "titles": {
+    "login": "Sign in",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "forbidden": "Access denied",
+    "notFound": "Page not found",
+    "users": "Users",
+    "userDetail": "User details",
+    "userNew": "New user",
+    "userEdit": "Edit user"
+  },
+  "nav": {
+    "main": "Main",
+    "open": "Open navigation",
+    "close": "Close navigation",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "users": "Users"
+  },
+  "header": {
+    "signOut": "Sign out"
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggle": "Theme: {{ current }}. Switch to {{ next }}."
+  },
+  "language": {
+    "label": "Language"
+  },
+  "auth": {
+    "title": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "invalidCredentials": "Invalid email or password.",
+    "failed": "Sign-in failed. Please try again.",
+    "demoTitle": "Demo accounts (mock auth)",
+    "errors": {
+      "emailRequired": "Email is required.",
+      "emailInvalid": "Enter a valid email address.",
+      "passwordRequired": "Password is required.",
+      "passwordMinLength": "Password must be at least {{ min }} characters."
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome to {{ appName }}. This page is a lazy-loaded feature.",
+    "configTitle": "Runtime config",
+    "apiBaseUrl": "API base URL",
+    "mockApi": "Mock API",
+    "logLevel": "Log level",
+    "userCount": "Users (from API)",
+    "on": "on",
+    "off": "off",
+    "playgroundTitle": "HTTP playground",
+    "playgroundHint": "Try the interceptors: loading bar, error toasts and timeouts.",
+    "slow": "Slow request (2s)",
+    "slowDone": "Slow request finished.",
+    "timeout": "Timeout (1.5s)",
+    "error404": "404 error",
+    "error500": "500 error",
+    "networkError": "Network error"
+  },
+  "settings": {
+    "intro": "Preferences are saved in this browser.",
+    "appearance": "Appearance",
+    "themeHint": "System follows your operating system setting.",
+    "region": "Language and region"
+  },
+  "users": {
+    "new": "New user",
+    "search": "Search",
+    "searchPlaceholder": "Name or email",
+    "role": "Role",
+    "status": "Status",
+    "allRoles": "All roles",
+    "allStatuses": "All statuses",
+    "clearFilters": "Clear filters",
+    "name": "Name",
+    "email": "Email",
+    "createdAt": "Created",
+    "actions": "Actions",
+    "roles": {
+      "admin": "Admin",
+      "user": "User"
+    },
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "empty": "No users found",
+    "emptyFiltered": "Try a different search or clear the filters.",
+    "loadError": "Users could not be loaded.",
+    "retry": "Try again",
+    "edit": "Edit",
+    "editUser": "Edit {{ name }}",
+    "delete": "Delete",
+    "deleteUser": "Delete {{ name }}",
+    "back": "Back to users",
+    "readOnly": "You can view users. Only admins can create, edit or delete them.",
+    "confirmDelete": {
+      "title": "Delete user?",
+      "message": "{{ name }} will be removed permanently.",
+      "confirm": "Delete user"
+    },
+    "deleted": "{{ name }} was deleted.",
+    "created": "{{ name }} was created.",
+    "updated": "Changes saved.",
+    "notFound": "User not found",
+    "notFoundText": "This user may have been deleted.",
+    "form": {
+      "create": "Create user",
+      "save": "Save changes",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "serverErrors": "Please fix the highlighted fields.",
+      "errors": {
+        "nameRequired": "Name is required.",
+        "nameMaxLength": "Name must be at most {{ max }} characters.",
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Enter a valid email address."
+      }
+    }
+  },
+  "errors": {
+    "unexpected": "An unexpected error occurred. Please try again.",
+    "http": {
+      "network": "Unable to reach the server. Check your connection and try again.",
+      "timeout": "The request timed out. Please try again.",
+      "forbidden": "You don't have permission to do that.",
+      "notFound": "The requested resource was not found.",
+      "badRequest": "The request could not be completed. Please check your input.",
+      "server": "Something went wrong on our side. Please try again later."
+    },
+    "notFoundPage": {
+      "text": "The page you're looking for doesn't exist or has moved.",
+      "back": "Go to the dashboard"
+    },
+    "forbiddenPage": {
+      "text": "You don't have permission to view this page.",
+      "back": "Go to the dashboard"
+    }
+  },
+  "ui": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "loading": "Loading…",
+    "dismiss": "Dismiss notification",
+    "required": "required",
+    "toast": {
+      "success": "Success",
+      "error": "Error",
+      "warning": "Warning",
+      "info": "Information"
+    },
+    "table": {
+      "empty": "No results"
+    },
+    "paginator": {
+      "label": "Pagination",
+      "range": "{{ from }}–{{ to }} of {{ total }}",
+      "previous": "Previous page",
+      "next": "Next page",
+      "pageSize": "Rows per page"
+    },
+    "unsaved": {
+      "title": "Discard changes?",
+      "message": "You have unsaved changes. If you leave this page, they will be lost.",
+      "confirm": "Discard changes",
+      "cancel": "Keep editing"
+    }
+  }
+}

@@ -1,20 +1,26 @@
 <header class="header">
   <button
+    appButton
     type="button"
+    variant="ghost"
+    size="icon"
     class="menu-button"
     aria-controls="app-sidebar"
     [attr.aria-expanded]="menuOpen()"
-    [attr.aria-label]="menuOpen() ? 'Close navigation' : 'Open navigation'"
+    [attr.aria-label]="(menuOpen() ? 'nav.close' : 'nav.open') | transloco"
     (click)="menuToggle.emit()"
   >
     <span class="menu-icon" aria-hidden="true"></span>
   </button>
   <a class="brand" routerLink="/">{{ appName() }}</a>
   <div class="actions">
-    <!-- Phase 5: theme toggle, language switcher -->
+    <app-language-select class="language" />
+    <app-theme-toggle />
     @if (user(); as u) {
       <span class="user" title="{{ u.email }}">{{ u.name }}</span>
-      <button type="button" class="sign-out" (click)="logout()">Sign out</button>
+      <button appButton type="button" size="sm" (click)="logout()">
+        {{ 'header.signOut' | transloco }}
+      </button>
     }
   </div>
 </header>

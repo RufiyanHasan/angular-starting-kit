@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { ConfigService } from '@core/config/config.service';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { filter } from 'rxjs';
 import { Footer } from '../footer/footer';
 import { Header } from '../header/header';
@@ -11,7 +12,7 @@ import { Sidebar } from '../sidebar/sidebar';
 /** Authenticated app chrome. Feature routes render inside its <router-outlet>. */
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet, Header, Sidebar, Footer, RouteLoadingBar],
+  imports: [RouterOutlet, TranslocoPipe, Header, Sidebar, Footer, RouteLoadingBar],
   templateUrl: './shell.html',
   styleUrl: './shell.scss',
   host: { '(document:keydown.escape)': 'closeMenu()' },

@@ -1,0 +1,127 @@
+<header class="page-header">
+  <h1>{{ 'titles.users' | transloco }}</h1>
+  @if (isAdmin()) {
+    <div class="page-actions">
+      <a appButton variant="primary" routerLink="new">
+        <app-icon name="plus" />
+        {{ 'users.new' | transloco }}
+      </a>
+    </div>
+  }
+</header>
+
+@if (!isAdmin()) {
+  <p class="hint">{{ 'users.readOnly' | transloco }}</p>
+}
+
+<form class="filters" role="search" (submit)="$event.preventDefault()">
+  <app-form-field class="search" [label]="'users.search' | transloco">
+    <input
+      appInput
+      id="users-search"
+      type="search"
+      autocomplete="off"
+      [value]="query().q"
+      [placeholder]="'users.searchPlaceholder' | transloco"
+      (input)="onSearch($event)"
+    />
+  </app-form-field>
+  <app-form-field [label]="'users.role' | transloco">
+    <select appInput id="users-role" (change)="onFilter('role', $event)">
+      <option value="" [selected]="!query().role">{{ 'users.allRoles' | transloco }}</option>
+      @for (role of roles; track role) {
+        <option [value]="role" [selected]="query().role === role">
+          {{ 'users.roles.' + role | transloco }}
+        </option>
+      }
+    </select>
+  </app-form-field>
+  <app-form-field [label]="'users.status' | transloco">
+    <select appInput id="users-status" (change)="onFilter('status', $event)">
+      <option value="" [selected]="!query().status">{{ 'users.allStatuses' | transloco }}</option>
+      @for (status of statuses; track status) {
+        <option [value]="status" [selected]="query().status === status">
+          {{ 'users.statuses.' + status | transloco }}
+        </option>
+      }
+    </select>
+  </app-form-field>
+  @if (store.hasFilters()) {
+    <button appButton type="button" variant="ghost" class="clear" (click)="clearFilters()">
+      {{ 'users.clearFilters' | transloco }}
+    </button>
+  }
+</form>
+
+@if (store.loadFailed()) {
+  <div class="alert" role="alert">
+    <p>{{ 'users.loadError' | transloco }}</p>
+    <button appButton type="button" size="sm" (click)="store.reload()">
+      {{ 'users.retry' | transloco }}
+    </button>
+  </div>
+} @else {
+  <app-data-table
+    [caption]="'titles.users' | transloco"
+    [rows]="store.entities()"
+    [columns]="columns()"
+    [trackBy]="trackById"
+    [loading]="store.loading()"
+    [sort]="sort()"
+    [emptyHeading]="'users.empty' | transloco"
+    [emptyDescription]="store.hasFilters() ? ('users.emptyFiltered' | transloco) : undefined"
+    (sortChange)="onSort($event)"
+  >
+    <ng-template appCell="name" [appCellOf]="store.entities()" let-user>
+      <a class="name" [routerLink]="user.id">{{ user.name }}</a>
+      <span class="email-mobile">{{ user.email }}</span>
+    </ng-template>
+    <ng-template appCell="role" [appCellOf]="store.entities()" let-user>
+      <span class="badge" [attr.data-tone]="user.role === 'admin' ? 'primary' : null">
+        {{ 'users.roles.' + user.role | transloco }}
+      </span>
+    </ng-template>
+    <ng-template appCell="status" [appCellOf]="store.entities()" let-user>
+      <span class="badge" [attr.data-tone]="user.status === 'active' ? 'success' : null">
+        {{ 'users.statuses.' + user.status | transloco }}
+      </span>
+    </ng-template>
+    <ng-template appCell="createdAt" [appCellOf]="store.entities()" let-user>
+      {{ user.createdAt | localDate }}
+    </ng-template>
+    <ng-template appCell="actions" [appCellOf]="store.entities()" let-user>
+      <span class="row-actions">
+        <a
+          appButton
+          variant="ghost"
+          size="icon"
+          [routerLink]="[user.id, 'edit']"
+          [attr.aria-label]="'users.editUser' | transloco: { name: user.name }"
+        >
+          <app-icon name="pencil" />
+        </a>
+        <button
+          appButton
+          type="button"
+          variant="ghost"
+          size="icon"
+          class="delete"
+          [attr.aria-label]="'users.deleteUser' | transloco: { name: user.name }"
+          (click)="remove(user)"
+        >
+          <app-icon name="trash" />
+        </button>
+      </span>
+    </ng-template>
+  </app-data-table>
+
+  @if (store.total() > 0) {
+    <app-paginator
+      [page]="query().page"
+      [pageSize]="query().pageSize"
+      [total]="store.total()"
+      [pageSizeOptions]="pageSizes"
+      (pageChange)="navigate($event)"
+    />
+  }
+}

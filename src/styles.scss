@@ -1,3 +1,5 @@
 /* Global styles. Component styles stay in their own files. */
 @use 'styles/tokens';
 @use 'styles/base';
+@use 'styles/forms';
+@use 'styles/utilities';

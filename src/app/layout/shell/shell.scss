@@ -58,6 +58,6 @@
     position: fixed;
     inset: var(--header-height) 0 0;
     z-index: calc(var(--z-sidebar) - 1);
-    background: rgb(0 0 0 / 30%);
+    background: var(--color-backdrop);
   }
 }

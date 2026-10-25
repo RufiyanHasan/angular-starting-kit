@@ -6,12 +6,15 @@ const angular = require('angular-eslint');
 const prettier = require('eslint-config-prettier/flat');
 
 /**
- * Layer boundaries: features → shared/core, layout → shared/core, shared → nothing app-specific.
+ * Layer boundaries: features → shared/core (and layout widgets like ThemeToggle), layout →
+ * shared/core, shared → nothing app-specific (third-party libs such as Transloco are fine).
  * Enforced with no-restricted-imports so architecture drift fails CI.
  */
 const restrict = (...layers) => ({
   patterns: layers.map((layer) => ({
-    group: [`@${layer}/*`, `**/${layer}/*`],
+    // Our alias (@core/…) or a relative path into src/app/<layer>/ — but not packages
+    // like @angular/core, which a glob such as **/core/* would wrongly match.
+    regex: `^(@${layer}/|(\\.{1,2}/)+(app/)?${layer}/)`,
     message: `This layer must not import from "${layer}". See README → Conventions.`,
   })),
 });
@@ -28,7 +31,11 @@ module.exports = defineConfig([
     ],
     processor: angular.processInlineTemplates,
     languageOptions: {
-      parserOptions: { projectService: true, tsconfigRootDir: __dirname },
+      parserOptions: {
+        // Root-level config files aren't in any tsconfig; lint them with default settings.
+        projectService: { allowDefaultProject: ['playwright.config.ts'] },
+        tsconfigRootDir: __dirname,
+      },
     },
     rules: {
       '@angular-eslint/directive-selector': [

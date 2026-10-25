@@ -1,0 +1,32 @@
+<!-- Backdrop click is a mouse shortcut; Escape and the close button are the keyboard equivalents. -->
+<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+<dialog
+  #dialog
+  class="dialog"
+  [attr.data-size]="size()"
+  [attr.aria-labelledby]="titleId"
+  (close)="onClose()"
+  (click)="onClick($event)"
+>
+  <div class="panel">
+    <header class="header">
+      <h2 class="title" [id]="titleId">{{ heading() }}</h2>
+      <button
+        appButton
+        type="button"
+        variant="ghost"
+        size="icon"
+        [attr.aria-label]="'ui.close' | transloco"
+        (click)="open.set(false)"
+      >
+        <app-icon name="x" />
+      </button>
+    </header>
+    <div class="body">
+      <ng-content />
+    </div>
+    <footer class="footer">
+      <ng-content select="[dialogActions]" />
+    </footer>
+  </div>
+</dialog>

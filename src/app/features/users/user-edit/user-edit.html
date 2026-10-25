@@ -1,0 +1,79 @@
+@let backLink = isNew() ? ['/users'] : ['/users', id()];
+<a class="back" [routerLink]="backLink">← {{ 'ui.cancel' | transloco }}</a>
+
+<h1>{{ (isNew() ? 'titles.userNew' : 'titles.userEdit') | transloco }}</h1>
+
+@if (user.isLoading()) {
+  <div class="card" aria-busy="true">
+    <span class="visually-hidden">{{ 'ui.loading' | transloco }}</span>
+    @for (i of [1, 2, 3, 4]; track i) {
+      <app-skeleton class="line" height="2.5rem" />
+    }
+  </div>
+} @else if (notFound()) {
+  <app-empty-state
+    icon="search"
+    [heading]="'users.notFound' | transloco"
+    [description]="'users.notFoundText' | transloco"
+  />
+} @else {
+  <form class="card" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    @if (serverError()) {
+      <div class="alert" role="alert">
+        <p>{{ 'users.form.serverErrors' | transloco }}</p>
+      </div>
+    }
+
+    <app-form-field
+      required
+      [label]="'users.name' | transloco"
+      [error]="serverFieldError('name') || (errorKey('name') | transloco: { max: nameMaxLength })"
+    >
+      <input appInput id="user-name" formControlName="name" autocomplete="name" required />
+    </app-form-field>
+
+    <app-form-field
+      required
+      [label]="'users.email' | transloco"
+      [error]="serverFieldError('email') || (errorKey('email') | transloco)"
+    >
+      <input
+        appInput
+        id="user-email"
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        required
+      />
+    </app-form-field>
+
+    <app-form-field [label]="'users.role' | transloco" [error]="serverFieldError('role')">
+      <select appInput id="user-role" formControlName="role">
+        @for (role of roles; track role) {
+          <option [value]="role">{{ 'users.roles.' + role | transloco }}</option>
+        }
+      </select>
+    </app-form-field>
+
+    <fieldset class="status">
+      <legend>{{ 'users.status' | transloco }}</legend>
+      @for (status of statuses; track status) {
+        <label>
+          <input type="radio" formControlName="status" [value]="status" />
+          {{ 'users.statuses.' + status | transloco }}
+        </label>
+      }
+    </fieldset>
+
+    <div class="actions">
+      <a appButton [routerLink]="backLink">{{ 'users.form.cancel' | transloco }}</a>
+      <button appButton variant="primary" type="submit" [disabled]="saving()" [loading]="saving()">
+        @if (saving()) {
+          {{ 'users.form.saving' | transloco }}
+        } @else {
+          {{ (isNew() ? 'users.form.create' : 'users.form.save') | transloco }}
+        }
+      </button>
+    </div>
+  </form>
+}

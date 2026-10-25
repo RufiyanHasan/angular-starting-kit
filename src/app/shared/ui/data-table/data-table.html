@@ -1,0 +1,66 @@
+<!-- Focusable scroll region so keyboard users can scroll wide tables on small screens. -->
+<div class="scroll" role="region" tabindex="0" [attr.aria-labelledby]="captionId">
+  <table [attr.aria-busy]="loading() || null">
+    <caption [id]="captionId" class="visually-hidden">
+      {{
+        caption()
+      }}
+    </caption>
+    <thead>
+      <tr>
+        @for (column of columns(); track column.key) {
+          <th
+            scope="col"
+            [attr.aria-sort]="ariaSort(column)"
+            [class.end]="column.align === 'end'"
+            [class.hide-mobile]="column.hideOnMobile"
+          >
+            @if (column.sortable) {
+              <button type="button" class="sort" (click)="toggleSort(column)">
+                {{ column.header }}
+                <app-icon [name]="sortIcon(column)" [size]="14" />
+              </button>
+            } @else {
+              {{ column.header }}
+            }
+          </th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @if (loading() && !rows().length) {
+        @for (i of skeletonRows; track i) {
+          <tr>
+            @for (column of columns(); track column.key) {
+              <td [class.hide-mobile]="column.hideOnMobile"><app-skeleton /></td>
+            }
+          </tr>
+        }
+      } @else {
+        @for (row of rows(); track trackBy()(row)) {
+          <tr>
+            @for (column of columns(); track column.key) {
+              <td [class.end]="column.align === 'end'" [class.hide-mobile]="column.hideOnMobile">
+                @if (templates().get(column.key); as cell) {
+                  <ng-container *ngTemplateOutlet="cell; context: { $implicit: row }" />
+                } @else {
+                  {{ value(row, column) }}
+                }
+              </td>
+            }
+          </tr>
+        } @empty {
+          <tr>
+            <td [attr.colspan]="columns().length">
+              <app-empty-state
+                [heading]="emptyHeading() || ('ui.table.empty' | transloco)"
+                [description]="emptyDescription()"
+              />
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</div>
+<p class="visually-hidden" role="status">{{ loading() ? ('ui.loading' | transloco) : '' }}</p>

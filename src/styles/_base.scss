@@ -21,6 +21,11 @@ a {
   color: var(--color-primary);
 }
 
+// Native <dialog> modals: stop the page behind them from scrolling.
+body:has(dialog[open]) {
+  overflow: hidden;
+}
+
 :focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;

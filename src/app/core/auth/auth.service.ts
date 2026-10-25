@@ -15,7 +15,7 @@ export class AuthService {
   private readonly logger = inject(LoggerService);
 
   private readonly session = signal<AuthSession | null>(null);
-  private refreshInFlight: Promise<AuthSession> | null = null;
+  private refreshPromise: Promise<AuthSession> | null = null;
 
   readonly user = computed(() => this.session()?.user ?? null);
   readonly isAuthenticated = computed(() => this.session() !== null);
@@ -49,7 +49,7 @@ export class AuthService {
    * share one refresh. On failure the session is cleared and the error is rethrown.
    */
   refresh(): Promise<AuthSession> {
-    this.refreshInFlight ??= this.provider
+    this.refreshPromise ??= this.provider
       .refresh()
       .then(
         (session) => {
@@ -61,8 +61,26 @@ export class AuthService {
           throw error;
         },
       )
-      .finally(() => (this.refreshInFlight = null));
-    return this.refreshInFlight;
+      .finally(() => (this.refreshPromise = null));
+    return this.refreshPromise;
+  }
+
+  /** The running refresh, if any. The auth interceptor holds new requests until it settles. */
+  refreshInFlight(): Promise<AuthSession> | null {
+    return this.refreshPromise;
+  }
+
+  /**
+   * Called when the session can't be refreshed: clear it and send the user to /login,
+   * remembering where they were. Safe to call several times (concurrent failures).
+   */
+  async expireSession(): Promise<void> {
+    this.session.set(null);
+    await this.provider.logout().catch(() => undefined);
+    if (this.router.url.startsWith('/login')) return;
+    await this.router.navigate(['/login'], {
+      queryParams: { returnUrl: this.router.url, reason: 'expired' },
+    });
   }
 
   /** Current access token, for the auth interceptor. */

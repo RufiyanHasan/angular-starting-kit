@@ -1,16 +1,48 @@
-<h1>Dashboard</h1>
-<p>Welcome to {{ config()?.appName }}. This page is a lazy-loaded feature.</p>
+<h1>{{ 'titles.dashboard' | transloco }}</h1>
+<p>{{ 'dashboard.welcome' | transloco: { appName: config()?.appName } }}</p>
 
-@if (config(); as c) {
-  <section class="card" aria-labelledby="runtime-config-heading">
-    <h2 id="runtime-config-heading">Runtime config</h2>
-    <dl>
-      <dt>API base URL</dt>
-      <dd>{{ c.apiBaseUrl }}</dd>
-      <dt>Mock API</dt>
-      <dd>{{ c.mockApi ? 'on' : 'off' }}</dd>
-      <dt>Log level</dt>
-      <dd>{{ c.logLevel }}</dd>
-    </dl>
+<div class="grid">
+  @if (config(); as c) {
+    <section class="card" aria-labelledby="runtime-config-heading">
+      <h2 id="runtime-config-heading">{{ 'dashboard.configTitle' | transloco }}</h2>
+      <dl>
+        <dt>{{ 'dashboard.apiBaseUrl' | transloco }}</dt>
+        <dd>{{ c.apiBaseUrl }}</dd>
+        <dt>{{ 'dashboard.mockApi' | transloco }}</dt>
+        <dd>{{ (c.mockApi ? 'dashboard.on' : 'dashboard.off') | transloco }}</dd>
+        <dt>{{ 'dashboard.logLevel' | transloco }}</dt>
+        <dd>{{ c.logLevel }}</dd>
+        <dt>{{ 'dashboard.userCount' | transloco }}</dt>
+        <dd>
+          @if (userCount() !== null) {
+            {{ userCount() }}
+          } @else {
+            <app-skeleton width="3ch" />
+          }
+        </dd>
+      </dl>
+    </section>
+  }
+
+  <section class="card" aria-labelledby="playground-heading">
+    <h2 id="playground-heading">{{ 'dashboard.playgroundTitle' | transloco }}</h2>
+    <p class="hint">{{ 'dashboard.playgroundHint' | transloco }}</p>
+    <div class="actions">
+      <button appButton size="sm" type="button" (click)="triggerSlow()">
+        {{ 'dashboard.slow' | transloco }}
+      </button>
+      <button appButton size="sm" type="button" (click)="triggerTimeout()">
+        {{ 'dashboard.timeout' | transloco }}
+      </button>
+      <button appButton size="sm" type="button" (click)="triggerError(404)">
+        {{ 'dashboard.error404' | transloco }}
+      </button>
+      <button appButton size="sm" type="button" (click)="triggerError(500)">
+        {{ 'dashboard.error500' | transloco }}
+      </button>
+      <button appButton size="sm" type="button" (click)="triggerError(0)">
+        {{ 'dashboard.networkError' | transloco }}
+      </button>
+    </div>
   </section>
-}
+</div>

@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-not-found',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoPipe],
   template: `
     <section class="not-found">
       <p class="code" aria-hidden="true">404</p>
-      <h1>Page not found</h1>
-      <p>The page you're looking for doesn't exist or has moved.</p>
-      <a routerLink="/">Go to the dashboard</a>
+      <h1>{{ 'titles.notFound' | transloco }}</h1>
+      <p>{{ 'errors.notFoundPage.text' | transloco }}</p>
+      <a routerLink="/">{{ 'errors.notFoundPage.back' | transloco }}</a>
     </section>
   `,
   styles: `

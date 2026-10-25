@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   NavigationCancel,
@@ -7,20 +7,21 @@ import {
   NavigationStart,
   Router,
 } from '@angular/router';
+import { LoadingService } from '@core/http/loading.service';
 import { filter, map } from 'rxjs';
 
-/** Thin bar at the top of the page while a navigation (incl. lazy chunk loading) is pending. */
+/** Thin bar at the top of the page while a navigation or an HTTP request is pending. */
 @Component({
   selector: 'app-route-loading-bar',
   template: `
     @if (loading()) {
-      <div class="bar" role="progressbar" aria-label="Loading page"></div>
+      <div class="bar" role="progressbar" aria-label="Loading"></div>
     }
   `,
   styleUrl: './route-loading-bar.scss',
 })
 export class RouteLoadingBar {
-  protected readonly loading = toSignal(
+  private readonly navigating = toSignal(
     inject(Router).events.pipe(
       filter(
         (e) =>
@@ -33,4 +34,7 @@ export class RouteLoadingBar {
     ),
     { initialValue: false },
   );
+  private readonly http = inject(LoadingService).isLoading;
+
+  protected readonly loading = computed(() => this.navigating() || this.http());
 }

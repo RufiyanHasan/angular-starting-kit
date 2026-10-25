@@ -1,0 +1,75 @@
+// Small page-level building blocks shared by features. Components own everything else.
+
+// Title row: <header class="page-header"><h1>…</h1><div class="page-actions">…</div></header>
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  margin-bottom: var(--space-4);
+
+  h1 {
+    margin: 0;
+  }
+}
+
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.card {
+  padding: var(--space-4) var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+// <span class="badge" data-tone="success">Active</span>
+.badge {
+  --badge-fg: var(--color-text-muted);
+  --badge-bg: var(--color-surface-2);
+
+  display: inline-block;
+  padding: 0.125rem var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--badge-fg);
+  background: var(--badge-bg);
+  border-radius: var(--radius-full);
+
+  &[data-tone='primary'] {
+    --badge-fg: var(--color-primary);
+    --badge-bg: var(--color-primary-soft);
+  }
+
+  &[data-tone='success'] {
+    --badge-fg: var(--color-success);
+    --badge-bg: var(--color-success-bg);
+  }
+
+  &[data-tone='danger'] {
+    --badge-fg: var(--color-danger);
+    --badge-bg: var(--color-danger-bg);
+  }
+}
+
+// <div class="alert" role="alert">…</div>
+.alert {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+  border-radius: var(--radius-sm);
+
+  p {
+    margin: 0;
+  }
+}

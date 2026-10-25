@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-forbidden',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoPipe],
   template: `
     <section class="forbidden">
       <p class="code" aria-hidden="true">403</p>
-      <h1>Access denied</h1>
-      <p>You don't have permission to view this page.</p>
-      <a routerLink="/">Go to the dashboard</a>
+      <h1>{{ 'titles.forbidden' | transloco }}</h1>
+      <p>{{ 'errors.forbiddenPage.text' | transloco }}</p>
+      <a routerLink="/">{{ 'errors.forbiddenPage.back' | transloco }}</a>
     </section>
   `,
   styles: `

@@ -1,68 +1,62 @@
 <main id="main-content" class="page">
+  <div class="prefs">
+    <app-language-select />
+    <app-theme-toggle />
+  </div>
   <section class="card" aria-labelledby="login-title">
     <p class="app-name">{{ appName }}</p>
-    <h1 id="login-title">Sign in</h1>
+    <h1 id="login-title">{{ 'auth.title' | transloco }}</h1>
 
-    @if (error(); as message) {
-      <p class="alert" role="alert">{{ message }}</p>
+    @if (reason() === 'expired' && !error()) {
+      <p class="notice" role="status">{{ 'auth.sessionExpired' | transloco }}</p>
+    }
+    @if (error(); as key) {
+      <p class="alert" role="alert">{{ key | transloco }}</p>
     }
 
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
       @if (loginMode === 'credentials') {
-        <div class="field">
-          <label for="email">Email</label>
+        <app-form-field [label]="'auth.email' | transloco" [error]="errorKey('email') | transloco">
           <input
+            appInput
             id="email"
             type="email"
             formControlName="email"
             autocomplete="username"
-            [attr.aria-invalid]="showError('email', 'required') || showError('email', 'email')"
-            aria-describedby="email-error"
+            required
           />
-          <p id="email-error" class="field-error">
-            @if (showError('email', 'required')) {
-              Email is required.
-            } @else if (showError('email', 'email')) {
-              Enter a valid email address.
-            }
-          </p>
-        </div>
+        </app-form-field>
 
-        <div class="field">
-          <label for="password">Password</label>
+        <app-form-field
+          [label]="'auth.password' | transloco"
+          [error]="errorKey('password') | transloco: { min: passwordMinLength }"
+        >
           <input
+            appInput
             id="password"
             type="password"
             formControlName="password"
             autocomplete="current-password"
-            [attr.aria-invalid]="
-              showError('password', 'required') || showError('password', 'minlength')
-            "
-            aria-describedby="password-error"
+            required
           />
-          <p id="password-error" class="field-error">
-            @if (showError('password', 'required')) {
-              Password is required.
-            } @else if (showError('password', 'minlength')) {
-              Password must be at least 6 characters.
-            }
-          </p>
-        </div>
+        </app-form-field>
       }
 
       <button
+        appButton
+        variant="primary"
         type="submit"
         class="submit"
         [disabled]="submitting()"
-        [attr.aria-busy]="submitting()"
+        [loading]="submitting()"
       >
-        {{ submitting() ? 'Signing in…' : 'Sign in' }}
+        {{ (submitting() ? 'auth.submitting' : 'auth.submit') | transloco }}
       </button>
     </form>
 
     @if (demoAccounts.length) {
       <aside class="demo" aria-labelledby="demo-title">
-        <h2 id="demo-title">Demo accounts (mock auth)</h2>
+        <h2 id="demo-title">{{ 'auth.demoTitle' | transloco }}</h2>
         <ul>
           @for (account of demoAccounts; track account.user.id) {
             <li>

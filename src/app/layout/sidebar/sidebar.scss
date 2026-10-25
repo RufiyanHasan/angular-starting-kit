@@ -22,11 +22,11 @@
     text-decoration: none;
 
     &:hover {
-      background: var(--color-bg);
+      background: var(--color-surface-2);
     }
 
     &.active {
-      background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+      background: var(--color-primary-soft);
       color: var(--color-primary);
       font-weight: 600;
     }

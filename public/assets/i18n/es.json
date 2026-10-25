@@ -1,0 +1,183 @@
+{
+  "app": {
+    "skipLink": "Saltar al contenido principal",
+    "footer": "© {{ year }} {{ appName }}"
+  },
+  "titles": {
+    "login": "Iniciar sesión",
+    "dashboard": "Panel",
+    "settings": "Configuración",
+    "forbidden": "Acceso denegado",
+    "notFound": "Página no encontrada",
+    "users": "Usuarios",
+    "userDetail": "Detalles del usuario",
+    "userNew": "Nuevo usuario",
+    "userEdit": "Editar usuario"
+  },
+  "nav": {
+    "main": "Principal",
+    "open": "Abrir navegación",
+    "close": "Cerrar navegación",
+    "dashboard": "Panel",
+    "settings": "Configuración",
+    "users": "Usuarios"
+  },
+  "header": {
+    "signOut": "Cerrar sesión"
+  },
+  "theme": {
+    "label": "Tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema",
+    "toggle": "Tema: {{ current }}. Cambiar a {{ next }}."
+  },
+  "language": {
+    "label": "Idioma"
+  },
+  "auth": {
+    "title": "Iniciar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "submit": "Iniciar sesión",
+    "submitting": "Iniciando sesión…",
+    "sessionExpired": "Tu sesión ha caducado. Vuelve a iniciar sesión.",
+    "invalidCredentials": "Correo o contraseña incorrectos.",
+    "failed": "No se pudo iniciar sesión. Inténtalo de nuevo.",
+    "demoTitle": "Cuentas de demostración (autenticación simulada)",
+    "errors": {
+      "emailRequired": "El correo es obligatorio.",
+      "emailInvalid": "Introduce un correo válido.",
+      "passwordRequired": "La contraseña es obligatoria.",
+      "passwordMinLength": "La contraseña debe tener al menos {{ min }} caracteres."
+    }
+  },
+  "dashboard": {
+    "welcome": "Bienvenido a {{ appName }}. Esta página es un módulo de carga diferida.",
+    "configTitle": "Configuración en tiempo de ejecución",
+    "apiBaseUrl": "URL base de la API",
+    "mockApi": "API simulada",
+    "logLevel": "Nivel de registro",
+    "userCount": "Usuarios (desde la API)",
+    "on": "activada",
+    "off": "desactivada",
+    "playgroundTitle": "Pruebas HTTP",
+    "playgroundHint": "Prueba los interceptores: barra de carga, avisos de error y tiempos de espera.",
+    "slow": "Petición lenta (2 s)",
+    "slowDone": "La petición lenta ha terminado.",
+    "timeout": "Tiempo de espera (1,5 s)",
+    "error404": "Error 404",
+    "error500": "Error 500",
+    "networkError": "Error de red"
+  },
+  "settings": {
+    "intro": "Las preferencias se guardan en este navegador.",
+    "appearance": "Apariencia",
+    "themeHint": "Sistema sigue la configuración de tu sistema operativo.",
+    "region": "Idioma y región"
+  },
+  "users": {
+    "new": "Nuevo usuario",
+    "search": "Buscar",
+    "searchPlaceholder": "Nombre o correo",
+    "role": "Rol",
+    "status": "Estado",
+    "allRoles": "Todos los roles",
+    "allStatuses": "Todos los estados",
+    "clearFilters": "Borrar filtros",
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "createdAt": "Creado",
+    "actions": "Acciones",
+    "roles": {
+      "admin": "Administrador",
+      "user": "Usuario"
+    },
+    "statuses": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "empty": "No se encontraron usuarios",
+    "emptyFiltered": "Prueba otra búsqueda o borra los filtros.",
+    "loadError": "No se pudieron cargar los usuarios.",
+    "retry": "Reintentar",
+    "edit": "Editar",
+    "editUser": "Editar a {{ name }}",
+    "delete": "Eliminar",
+    "deleteUser": "Eliminar a {{ name }}",
+    "back": "Volver a usuarios",
+    "readOnly": "Puedes ver los usuarios. Solo los administradores pueden crearlos, editarlos o eliminarlos.",
+    "confirmDelete": {
+      "title": "¿Eliminar usuario?",
+      "message": "{{ name }} se eliminará de forma permanente.",
+      "confirm": "Eliminar usuario"
+    },
+    "deleted": "{{ name }} se ha eliminado.",
+    "created": "{{ name }} se ha creado.",
+    "updated": "Cambios guardados.",
+    "notFound": "Usuario no encontrado",
+    "notFoundText": "Es posible que este usuario se haya eliminado.",
+    "form": {
+      "create": "Crear usuario",
+      "save": "Guardar cambios",
+      "saving": "Guardando…",
+      "cancel": "Cancelar",
+      "serverErrors": "Corrige los campos marcados.",
+      "errors": {
+        "nameRequired": "El nombre es obligatorio.",
+        "nameMaxLength": "El nombre debe tener como máximo {{ max }} caracteres.",
+        "emailRequired": "El correo es obligatorio.",
+        "emailInvalid": "Introduce un correo válido."
+      }
+    }
+  },
+  "errors": {
+    "unexpected": "Se produjo un error inesperado. Inténtalo de nuevo.",
+    "http": {
+      "network": "No se puede conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.",
+      "timeout": "La petición ha tardado demasiado. Inténtalo de nuevo.",
+      "forbidden": "No tienes permiso para hacer eso.",
+      "notFound": "No se encontró el recurso solicitado.",
+      "badRequest": "No se pudo completar la petición. Revisa los datos introducidos.",
+      "server": "Algo ha fallado en nuestro lado. Inténtalo más tarde."
+    },
+    "notFoundPage": {
+      "text": "La página que buscas no existe o se ha movido.",
+      "back": "Ir al panel"
+    },
+    "forbiddenPage": {
+      "text": "No tienes permiso para ver esta página.",
+      "back": "Ir al panel"
+    }
+  },
+  "ui": {
+    "close": "Cerrar",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "loading": "Cargando…",
+    "dismiss": "Descartar notificación",
+    "required": "obligatorio",
+    "toast": {
+      "success": "Éxito",
+      "error": "Error",
+      "warning": "Advertencia",
+      "info": "Información"
+    },
+    "table": {
+      "empty": "Sin resultados"
+    },
+    "paginator": {
+      "label": "Paginación",
+      "range": "{{ from }}–{{ to }} de {{ total }}",
+      "previous": "Página anterior",
+      "next": "Página siguiente",
+      "pageSize": "Filas por página"
+    },
+    "unsaved": {
+      "title": "¿Descartar cambios?",
+      "message": "Tienes cambios sin guardar. Si sales de esta página, se perderán.",
+      "confirm": "Descartar cambios",
+      "cancel": "Seguir editando"
+    }
+  }
+}
