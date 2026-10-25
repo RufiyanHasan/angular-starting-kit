@@ -2,7 +2,7 @@
 
 A production-ready starter for new client projects. Clone it and you have a working app on day one: auth, an HTTP layer, theming, i18n, a sample feature, tests, CI and Docker.
 
-> **Status:** Phase 2 of 8 complete (architecture). The [Progress log](#progress-log) below is updated after every phase.
+> **Status:** Phase 3 of 8 complete (auth). The [Progress log](#progress-log) below is updated after every phase.
 
 ---
 
@@ -105,7 +105,7 @@ A production-ready starter for new client projects. Clone it and you have a work
 | 7   | Testing: unit (≥80% on `core/`), Playwright e2e + axe                                                                   | `test: add unit coverage and playwright e2e`                    |
 | 8   | DevOps & docs: GitHub Actions, Dockerfile, nginx, full README, ADRs                                                     | `ci: add pipeline, docker and docs`                             |
 
-Each phase ends with `lint` + `test` + `build` all green, a short summary, and a commit. The next phase doesn't start while anything is red.
+Each phase ends with `lint` + `test` + `build` all green and a short summary. The next phase doesn't start while anything is red. From Phase 3 onward, commits are made by the project owner, not the assistant.
 
 ### Prerequisite
 
@@ -196,20 +196,109 @@ Read it with `inject(ConfigService).config()` (a signal) or `.get('key')`. Missi
 2. Add `{ path: 'reports', loadChildren: () => import('@features/reports/reports.routes') }` to the shell's children in `app.routes.ts`.
 3. Add `{ label: 'Reports', path: '/reports' }` to `layout/nav-items.ts`.
 
+### Auth (Phase 3)
+
+**How it fits together:**
+
+```
+features / layout ──► AuthService (signals: user, isAuthenticated) ──► AuthProvider (abstract)
+                                                                          ├─ MockJwtAuthProvider  (auth.provider: "mock")
+                                                                          └─ your OIDC provider   (auth.provider: "oidc")
+```
+
+- **`AuthService`** (`core/auth/auth.service.ts`) is the only auth API that feature code uses:
+  - **State:** `user()` and `isAuthenticated()` signals.
+  - **Actions:** `login()`, `logout()` and `hasAnyRole()`.
+  - **Refresh:** `refresh()` is single-flight, so concurrent callers share one in-flight refresh. The Phase 4 interceptor relies on this.
+- **`AuthProvider`** (`core/auth/auth-provider.ts`) is the contract: `loginMode`, `restore()`, `login()`, `refresh()` and `logout()`.
+- **`provide-auth.ts`** picks the implementation from `config.json → auth.provider`. The same build can therefore run the mock provider in a demo environment and OIDC in production.
+- **Startup:** config loads first, then `AuthService.init()` restores any saved session, so guards know the auth state on the very first navigation.
+
+**Mock JWT provider (`auth.provider: "mock"`):**
+
+- Runs entirely in the browser and issues unsigned JWTs.
+- The access token lives 5 minutes and the refresh token 7 days, so the refresh path really runs during development.
+- The session is saved in `localStorage` and survives a reload.
+- **Not for production.**
+
+| Demo account        | Password   | Roles       |
+| ------------------- | ---------- | ----------- |
+| `admin@example.com` | `admin123` | admin, user |
+| `user@example.com`  | `user123`  | user        |
+
+**Guards (`core/auth/auth.guards.ts`), all functional:**
+
+| Guard                | Use                                        | On failure                        |
+| -------------------- | ------------------------------------------ | --------------------------------- |
+| `authGuard`          | Shell (`canActivate` + `canActivateChild`) | `/login?returnUrl=<original url>` |
+| `guestGuard`         | `/login`                                   | `/`                               |
+| `roleGuard('admin')` | any feature route                          | `/forbidden` (403 page)           |
+
+**Login page** (`features/auth/login`):
+
+- Reactive form with inline validation messages, wired up with `aria-invalid` and `aria-describedby`.
+- Failed sign-ins show an error in a `role="alert"` region.
+- After sign-in it redirects to `returnUrl`, but only to same-origin paths, which blocks open-redirect attacks.
+- With the mock provider it lists the demo accounts.
+- If the provider's `loginMode` is `'redirect'`, the form collapses to a single "Sign in" button.
+
+**Swapping in OIDC** (e.g. [`angular-auth-oidc-client`](https://github.com/damienbod/angular-auth-oidc-client)). Feature code doesn't change:
+
+1. `npm i angular-auth-oidc-client`, add `provideAuth({ config: {...} })` from that library to `provideCore()`, and add `"oidc"` settings (authority, clientId, …) to `AppConfig` / `config.json`.
+2. Create `core/auth/oidc/oidc-auth.provider.ts`:
+
+   ```ts
+   @Injectable()
+   export class OidcAuthProvider extends AuthProvider {
+     readonly loginMode = 'redirect' as const;
+     private readonly oidc = inject(OidcSecurityService);
+
+     async restore() {
+       const { isAuthenticated, userData, accessToken } = await firstValueFrom(
+         this.oidc.checkAuth(),
+       );
+       return isAuthenticated ? toSession(userData, accessToken) : null;
+     }
+     async login() {
+       this.oidc.authorize(); // full-page redirect to the IdP
+       return new Promise<never>(() => {});
+     }
+     async refresh() {
+       const result = await firstValueFrom(this.oidc.forceRefreshSession());
+       if (!result?.isAuthenticated) throw new AuthError('session_expired');
+       return toSession(result.userData, result.accessToken);
+     }
+     async logout() {
+       await firstValueFrom(this.oidc.logoff());
+     }
+   }
+   ```
+
+   `toSession()` maps your IdP's claims to `User` (id, name, email, roles).
+
+3. Register it in `provide-auth.ts`: `oidc: OidcAuthProvider` (and add it to the providers array).
+4. Set `"auth": { "provider": "oidc" }` in that environment's `config.json`.
+
+**Testing helpers:**
+
+- `provideAuthForTesting(user | null)` from `core/auth/testing.ts` provides a `FakeAuthProvider` whose methods are `vi.fn()` spies.
+- Call `await TestBed.inject(AuthService).init()` to sign that user in.
+- Files named `testing.ts` are excluded from the app build.
+
 ---
 
 ## Progress log
 
-| Phase                 | Status     | Summary                                                                                                                                                                                                                                                                |
-| --------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0 Plan                | ✅ Done    | Plan approved. Defaults: hand-rolled a11y primitives (no CDK), Spanish as 2nd language                                                                                                                                                                                 |
-| 1 Workspace & tooling | ✅ Done    | Angular 22.2 zoneless app (SCSS, routing, Vitest, no SSR); angular-eslint with typed rules + layer boundaries; Prettier; husky + lint-staged + commitlint; path aliases; `.nvmrc`, `.editorconfig`, `.gitignore`. lint/test/build green                                |
-| 2 Architecture        | ✅ Done    | Runtime `config.json` (validated, loaded before bootstrap), logger with pluggable sinks, global error handler, title strategy; responsive shell (header, off-canvas sidebar, footer, skip link, route loading bar); lazy dashboard/settings + 404. 22 unit tests green |
-| 3 Auth                | ⏳ Pending |                                                                                                                                                                                                                                                                        |
-| 4 HTTP layer          | ⏳ Pending |                                                                                                                                                                                                                                                                        |
-| 5 UI foundation       | ⏳ Pending |                                                                                                                                                                                                                                                                        |
-| 6 State & Users       | ⏳ Pending |                                                                                                                                                                                                                                                                        |
-| 7 Testing             | ⏳ Pending |                                                                                                                                                                                                                                                                        |
-| 8 DevOps & docs       | ⏳ Pending |                                                                                                                                                                                                                                                                        |
+| Phase                 | Status     | Summary                                                                                                                                                                                                                                                                                                   |
+| --------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0 Plan                | ✅ Done    | Plan approved. Defaults: hand-rolled a11y primitives (no CDK), Spanish as 2nd language                                                                                                                                                                                                                    |
+| 1 Workspace & tooling | ✅ Done    | Angular 22.2 zoneless app (SCSS, routing, Vitest, no SSR); angular-eslint with typed rules + layer boundaries; Prettier; husky + lint-staged + commitlint; path aliases; `.nvmrc`, `.editorconfig`, `.gitignore`. lint/test/build green                                                                   |
+| 2 Architecture        | ✅ Done    | Runtime `config.json` (validated, loaded before bootstrap), logger with pluggable sinks, global error handler, title strategy; responsive shell (header, off-canvas sidebar, footer, skip link, route loading bar); lazy dashboard/settings + 404. 22 unit tests green                                    |
+| 3 Auth                | ✅ Done    | `AuthProvider` contract + mock JWT provider (persisted session, real refresh path), `AuthService` with signals and single-flight refresh, `authGuard`/`guestGuard`/`roleGuard`, login page (reactive form, a11y, safe returnUrl), 403 page, sign-out in header; OIDC swap documented. 59 unit tests green |
+| 4 HTTP layer          | ⏳ Pending |                                                                                                                                                                                                                                                                                                           |
+| 5 UI foundation       | ⏳ Pending |                                                                                                                                                                                                                                                                                                           |
+| 6 State & Users       | ⏳ Pending |                                                                                                                                                                                                                                                                                                           |
+| 7 Testing             | ⏳ Pending |                                                                                                                                                                                                                                                                                                           |
+| 8 DevOps & docs       | ⏳ Pending |                                                                                                                                                                                                                                                                                                           |
 
 _Phase 8 replaces this README with the full guide: quick start, folder structure, how to add a feature, how to swap the auth provider, how to add a language, a scripts table and conventions. The progress log stays at the bottom._

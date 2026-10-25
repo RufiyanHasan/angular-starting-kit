@@ -11,6 +11,10 @@
   </button>
   <a class="brand" routerLink="/">{{ appName() }}</a>
   <div class="actions">
-    <!-- Phase 3/5: user menu, theme toggle, language switcher -->
+    <!-- Phase 5: theme toggle, language switcher -->
+    @if (user(); as u) {
+      <span class="user" title="{{ u.email }}">{{ u.name }}</span>
+      <button type="button" class="sign-out" (click)="logout()">Sign out</button>
+    }
   </div>
 </header>

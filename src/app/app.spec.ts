@@ -2,19 +2,23 @@ import { TestBed } from '@angular/core/testing';
 import { Title } from '@angular/platform-browser';
 import { TitleStrategy, provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { AuthService } from '@core/auth/auth.service';
+import { provideAuthForTesting } from '@core/auth/testing';
 import { provideConfigForTesting } from '@core/config/testing';
 import { AppTitleStrategy } from '@core/routing/app-title-strategy';
 import { routes } from './app.routes';
 
 describe('App routes', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       providers: [
         provideConfigForTesting({ appName: 'Acme' }),
+        provideAuthForTesting(),
         provideRouter(routes),
         { provide: TitleStrategy, useClass: AppTitleStrategy },
       ],
     });
+    await TestBed.inject(AuthService).init();
   });
 
   it('redirects the root to the lazy-loaded dashboard', async () => {

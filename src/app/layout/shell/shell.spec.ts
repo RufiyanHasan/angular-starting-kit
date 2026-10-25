@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { AuthService } from '@core/auth/auth.service';
+import { provideAuthForTesting } from '@core/auth/testing';
 import { provideConfigForTesting } from '@core/config/testing';
 import { Shell } from './shell';
 
@@ -9,9 +11,11 @@ describe('Shell', () => {
     TestBed.configureTestingModule({
       providers: [
         provideConfigForTesting({ appName: 'Acme' }),
+        provideAuthForTesting(),
         provideRouter([{ path: '', component: Shell, children: [] }]),
       ],
     });
+    await TestBed.inject(AuthService).init();
     const harness = await RouterTestingHarness.create('/');
     const el = harness.routeNativeElement as HTMLElement;
     const menuButton = () =>
@@ -25,6 +29,7 @@ describe('Shell', () => {
     expect(el.querySelector('.brand')?.textContent).toContain('Acme');
     expect(el.querySelector('nav[aria-label="Main"]')).not.toBeNull();
     expect(el.querySelector('main#main-content')).not.toBeNull();
+    expect(el.querySelector('.user')?.textContent).toContain('Test User');
   });
 
   it('toggles the mobile menu and closes it on Escape', async () => {
