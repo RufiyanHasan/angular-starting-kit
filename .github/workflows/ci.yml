@@ -94,3 +94,50 @@ jobs:
           test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/assets/missing.json)" = 404
           curl -fsSI http://localhost:8080/ | grep -qi 'content-security-policy'
           docker logs app
+
+  # Live demo: the static build on GitHub Pages (mock API + mock auth, so no backend needed).
+  # Runs only for pushes to main, after the checks pass. Pages can't set custom headers or
+  # run the Docker image; real environments should use the image instead.
+  deploy-pages:
+    name: Deploy demo to GitHub Pages
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      # Project pages are served from /<repo-name>/, not the domain root.
+      - name: Build for the Pages subpath
+        run: npx ng build --base-href "/${{ github.event.repository.name }}/"
+
+      # Pages has no SPA fallback: serving index.html as 404.html makes deep links and reloads work.
+      - name: Add SPA fallback
+        run: cp dist/angular-starter-kit/browser/index.html dist/angular-starter-kit/browser/404.html
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/angular-starter-kit/browser
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

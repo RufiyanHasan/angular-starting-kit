@@ -4,6 +4,8 @@
 
 A production-ready starter for new client projects. Clone it and you have a working app on day one: authentication, an HTTP layer, theming with dark mode, i18n, an accessible UI kit, a complete sample feature, unit and e2e tests, CI and a Docker image. It runs with **no backend**: an in-browser mock API answers every request until you point it at a real one.
 
+> **Live demo:** <https://rufiyanhasan.github.io/angular-starting-kit/> (mock API and mock sign-in; use the demo accounts below).
+>
 > **Status:** all 8 phases complete. See the [Progress log](#progress-log).
 
 **Contents:** [Quick start](#quick-start) · [What's inside](#whats-inside) · [Scripts](#scripts) · [Project structure](#project-structure) · [Conventions](#conventions) · [Configuration](#configuration) · [Adding a feature](#adding-a-feature) · [Authentication](#authentication) · [HTTP layer](#http-layer) · [State management](#state-management) · [UI kit and theming](#ui-kit-and-theming) · [Internationalization](#internationalization) · [Accessibility](#accessibility) · [Testing](#testing) · [CI](#ci) · [Docker and deployment](#docker-and-deployment) · [Dependencies](#dependencies) · [Decision records](#decision-records) · [Troubleshooting](#troubleshooting)
@@ -386,6 +388,7 @@ Feature stores are provided on the feature route (created on entry, destroyed on
 
 1. **verify:** `npm ci` → format check → lint → unit tests with the coverage gate (report uploaded) → production build → Playwright e2e (HTML report uploaded on failure).
 2. **docker:** builds the image (with layer cache) and smoke-tests the running container: health check, app shell, SPA deep link, runtime config, real 404 for missing assets, CSP header present.
+3. **deploy-pages** (pushes to `main` only, after `verify` passes): builds with `--base-href /<repo-name>/`, copies `index.html` to `404.html` so deep links work, and publishes the live demo to GitHub Pages. One-time setup: repo **Settings → Pages → Source: GitHub Actions**.
 
 ## Docker and deployment
 
@@ -406,6 +409,7 @@ docker run --rm -p 8080:8080 angular-starter-kit          # http://localhost:808
 
 - **nginx** (`docker/templates/default.conf.template`): SPA fallback to `index.html`; content-hashed JS/CSS cached for a year (`immutable`); `index.html`, `assets/` (config, translations) and the service worker revalidated on every load, so deploys and config changes apply immediately; missing assets are real 404s; gzip on.
 - **Security headers** (`docker/security-headers.conf`): CSP, `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, COOP. Scripts are additionally locked down by the CSP `<meta>` that Angular's `autoCsp` writes into `index.html` (hashes + `strict-dynamic`). Enable HSTS where TLS terminates.
+- **GitHub Pages** hosts the live demo (see [CI](#ci)). It's static hosting only: no custom headers (so no CSP header or cache rules) and no Docker. Fine for a demo; use the image for real environments.
 - **Other hosts** (S3/CloudFront, Azure Static Web Apps, Netlify, Vercel): deploy `dist/angular-starter-kit/browser`, rewrite unknown paths to `/index.html`, and copy the caching rules above.
 - **SSR** is off by default. `ng add @angular/ssr` enables it; then load `config.json` from the file system on the server, and guard `localStorage`/`window` usage (already isolated in `StorageService` and `ThemeService`).
 
